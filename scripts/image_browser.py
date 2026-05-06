@@ -80,7 +80,7 @@ components_list = ["Sort by", "Filename keyword search", "EXIF keyword search", 
 
 num_of_imgs_per_page = 0
 loads_files_num = 0
-image_ext_list = [".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp", ".svg"]
+image_ext_list = [".png", ".jpg", ".jpeg", ".bmp", ".gif", ".webp", ".svg", ".avif"]
 video_ext_list = [".mp4", ".mov", ".avi", ".wmv", ".flv", ".mkv", ".webm", ".mpeg", ".mpg", ".3gp", ".ogv", ".m4v"]
 if not opencv_installed:
     video_ext_list = []
