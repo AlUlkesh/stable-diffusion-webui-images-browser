@@ -1041,7 +1041,8 @@ def _process_exif_data(fileinfos, exif_keyword, negative_prompt_search, use_rege
                     fileinfos = result
 
         # Fill work files for further filtering
-        wib_db.fill_work_files(cursor, fileinfos)
+        if len(aes_filter_min) != 0 or len(aes_filter_max) != 0 or ranking_filter != "All":
+            wib_db.fill_work_files(cursor, fileinfos)
         
         if len(aes_filter_min) != 0 or len(aes_filter_max) != 0:
             try:
