@@ -962,8 +962,9 @@ def get_all_images(dir_name, sort_by, sort_order, keyword, tab_base_tag_box, img
         filenames = [finfo[0] for finfo in fileinfos]
     elif sort_by == "ranking":
         finfo_ranked = {}
+        rankings = wib_db.load_ranking()
         for fi_info in fileinfos:
-            finfo_ranked[fi_info[0]], _ = get_ranking(fi_info[0])
+            finfo_ranked[fi_info[0]] = rankings.get(fi_info[0], "None")
         if sort_order == up_symbol:
             fileinfos = dict(sorted(finfo_ranked.items(), key=lambda x: (x[1], x[0])))
         else:
