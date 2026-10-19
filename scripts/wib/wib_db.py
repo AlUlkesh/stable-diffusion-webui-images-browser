@@ -592,6 +592,16 @@ def select_ranking(file):
 
     return return_ranking
 
+def load_ranking():
+    with transaction() as cursor:
+        cursor.execute('''
+        SELECT file, ranking
+        FROM ranking
+        ''')
+        rows = cursor.fetchall()
+
+    return dict(rows)
+
 def update_ranking(file, ranking):
     name = os.path.basename(file)
     with transaction() as cursor:
