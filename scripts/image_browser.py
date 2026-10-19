@@ -972,15 +972,14 @@ def get_all_images(dir_name, sort_by, sort_order, keyword, tab_base_tag_box, img
         filenames = [finfo for finfo in fileinfos]
     else:
         sort_values = {}
-        exif_info = dict(exif_cache)
-        if exif_info:
-            for k, v in exif_info.items():
-                pattern = "(?<=" + re.escape(sort_by + ":") + ").*?(?=(,|$))"
-                match = re.search(pattern, v, flags=re.DOTALL | re.IGNORECASE)
+        if exif_cache:
+            pattern = re.compile("(?<=" + re.escape(sort_by + ":") + ").*?(?=(,|$))", flags=re.DOTALL | re.IGNORECASE)
+            for fi_info in fileinfos:
+                match = pattern.search(exif_cache[fi_info[0]])
                 if match:
-                    sort_values[k] = match.group().strip()
+                    sort_values[fi_info[0]] = match.group().strip()
                 else:
-                    sort_values[k] = "0"
+                    sort_values[fi_info[0]] = "0"
             if sort_by == "aesthetic_score" or sort_by == "cfg scale":
                 sort_float = True
             else:
