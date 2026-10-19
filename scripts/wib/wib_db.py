@@ -783,8 +783,23 @@ def select_prompts(file):
     return prompt, neg_prompt
 
 def load_exif_data(exif_cache):
-    with transaction() as cursor:
-        cursor.execute('''
+    # Ordered aggregates (SQLite 3.44+) avoid sorting the whole table twice
+    if sqlite3.sqlite_version_info >= (3, 44, 0):
+        query = '''
+        SELECT file, group_concat(
+            CASE WHEN key = 'prompt' OR key = 'negative_prompt'
+                 THEN key || ': ' || value || char(10)
+                 ELSE key || ': ' || value END,
+            ', ' ORDER BY
+                CASE WHEN key = 'prompt' THEN 0
+                     WHEN key = 'negative_prompt' THEN 1 ELSE 2 END,
+                key
+        ) AS string
+        FROM exif_data
+        GROUP BY file
+        '''
+    else:
+        query = '''
         SELECT file, group_concat(
             case when key = 'prompt' or key = 'negative_prompt' then key || ': ' || value || '\n'
             else key || ': ' || value
@@ -799,8 +814,9 @@ def load_exif_data(exif_cache):
                 key
         )
         GROUP BY file
-        ''')
-
+        '''
+    with transaction() as cursor:
+        cursor.execute(query)
         rows = cursor.fetchall()
     for row in rows:
         exif_cache[row[0]] = row[1]
