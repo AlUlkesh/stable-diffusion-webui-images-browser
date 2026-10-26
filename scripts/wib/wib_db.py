@@ -792,7 +792,17 @@ def select_prompts(file):
 
     return prompt, neg_prompt
 
+def prefetch_db_file():
+    # Index-order queries read pages scattered across the file; a sequential read first is much faster on a cold cache
+    try:
+        with open(db_file, "rb", buffering=0) as f:
+            while f.read(16 * 1024 * 1024):
+                pass
+    except OSError:
+        pass
+
 def load_exif_data(exif_cache):
+    prefetch_db_file()
     # Ordered aggregates (SQLite 3.44+) avoid sorting the whole table twice
     if sqlite3.sqlite_version_info >= (3, 44, 0):
         query = '''
